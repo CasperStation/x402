@@ -1,0 +1,30 @@
+{
+  "name": "x402-deploy",
+  "version": "1.0.0",
+  "description": "X402 payment integration demo",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx --watch src/index.ts",
+    "build": "echo 'No build step required'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "latest",
+    "dotenv": "latest",
+    "x402-express": "latest",
+    "@coinbase/x402": "latest"
+  },
+  "devDependencies": {
+    "tsx": "latest",
+    "@types/node": "latest",
+    "@types/express": "latest",
+    "typescript": "latest"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
