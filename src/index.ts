@@ -9,10 +9,7 @@ const facilitatorUrl = process.env.FACILITATOR_URL as Resource;
 const payTo = process.env.ADDRESS as `0x${string}` | SolanaAddress;
 const network = process.env.NETWORK as Network;
 
-if (!facilitatorUrl || !payTo || !network) {
-  console.error("Missing required environment variables");
-  process.exit(1);
-}
+
 
 const app = new Hono();
 
