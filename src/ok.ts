@@ -25,9 +25,14 @@ app.use(
         config: {
           description: "Mint a new token with $1 USDC.Website : https://www.mkmoonai.com/"
         }
-      }
+      },
     },
-    facilitator
+    facilitator,
+    {
+      cdpClientKey: process.env.CDP_CLIENT_KEY,
+      appLogo: 'https://pbs.twimg.com/profile_images/1978862702182236160/XpOw1Mp__400x400.jpg',
+      appName: 'MKMOON AI',
+    }
   ),
 );
 
