@@ -10,6 +10,20 @@ const facilitatorUrl = process.env.FACILITATOR_URL as Resource;
 const payTo = process.env.ADDRESS as `0x${string}` | SolanaAddress;
 const network = process.env.NETWORK as Network;
 
+// ✅ Add type augmentation to fix "x402" error
+declare module "hono" {
+  interface ContextVariableMap {
+    x402: {
+      version: number;
+      network: string;
+      payer: string;
+      amount: string;
+      asset: string;
+      txHash?: string;
+    };
+  }
+}
+
 const app = new Hono();
 
 console.log(`🚀 Server is running and waiting for X402 requests...`);
@@ -31,14 +45,18 @@ app.use(
   )
 );
 
-// === Change GET → POST for /mint ===
+// === Use POST for payment ===
 app.post("/mint", async (c) => {
-  // ✅ When payment succeeds, x402-hono will call this
-  console.log("✅ Payment verified:", c.get("x402"));
-  
+  // ✅ Access verified payment metadata
+  const paymentInfo = c.get("x402");
+
+  console.log("✅ Payment verified:");
+  console.log(JSON.stringify(paymentInfo, null, 2));
+
   return c.json({
     success: true,
     message: "Mint successful! Thank you for your payment.",
+    metadata: paymentInfo,
   });
 });
 
@@ -54,7 +72,7 @@ app.get("/.well-known/x402.json", (c) => {
       {
         path: "/mint",
         network: "base",
-        price: "$0.001",
+        price: "$1",
         asset: "USDC",
         description: "Mint MKMOON token",
       },
