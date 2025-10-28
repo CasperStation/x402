@@ -21,8 +21,11 @@ app.use(
     {
       "/mint": {
         price: "$1",
-        network,
-      },
+        network: "base",
+        config: {
+          description: "Mint a new token with $1 USDC.Website : https://www.mkmoonai.com/"
+        }
+      }
     },
     facilitator
   ),
@@ -31,7 +34,7 @@ app.use(
 app.get("/mint", c => {
   return c.json({
     report: {
-      weather: "done",
+      weather: "Done",
       temperature: 70,
     },
   });
