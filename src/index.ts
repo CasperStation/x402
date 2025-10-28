@@ -19,8 +19,8 @@ app.use(
   paymentMiddleware(
     payTo,
     {
-      "/weather": {
-        price: "$0.001",
+      "/mint": {
+        price: "$1",
         network,
       },
     },
@@ -28,10 +28,10 @@ app.use(
   ),
 );
 
-app.get("/weather", c => {
+app.get("/mint", c => {
   return c.json({
     report: {
-      weather: "sunny",
+      weather: "done",
       temperature: 70,
     },
   });
