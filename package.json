@@ -7,6 +7,7 @@
   "scripts": {
     "start": "tsx src/index.ts",
     "dev": "tsx --watch src/index.ts",
+    "ok": "tsx --watch src/ok.ts",
     "build": "echo 'No build step required'"
   },
   "keywords": [],
@@ -16,7 +17,10 @@
     "express": "latest",
     "dotenv": "latest",
     "x402-express": "latest",
-    "@coinbase/x402": "latest"
+    "@coinbase/x402": "latest",
+    "@hono/node-server": "^1.13.8",
+    "hono": "^4.7.1",
+    "x402-hono": "workspace:*"
   },
   "devDependencies": {
     "tsx": "latest",

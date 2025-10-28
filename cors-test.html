@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X402 CORS Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 3px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <h1>X402 Server CORS Test</h1>
+    
+    <div class="test-section">
+        <h3>Health Check (No Payment Required)</h3>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="health-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Weather Endpoint (Payment Required)</h3>
+        <button onclick="testWeather()">Test Weather Endpoint</button>
+        <div id="weather-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Preflight Test</h3>
+        <button onclick="testPreflight()">Test OPTIONS Request</button>
+        <div id="preflight-result" class="result"></div>
+    </div>
+
+    <script>
+        const SERVER_URL = 'http://localhost:4021';
+        
+        function displayResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = JSON.stringify(data, null, 2);
+            element.className = `result ${isError ? 'error' : 'success'}`;
+        }
+        
+        async function testHealth() {
+            try {
+                console.log('Testing health endpoint...');
+                const response = await fetch(`${SERVER_URL}/health`);
+                const data = await response.json();
+                
+                console.log('Health response:', data);
+                displayResult('health-result', {
+                    status: response.status,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    data: data
+                });
+            } catch (error) {
+                console.error('Health test error:', error);
+                displayResult('health-result', {
+                    error: error.message,
+                    type: error.name
+                }, true);
+            }
+        }
+        
+        async function testWeather() {
+            try {
+                console.log('Testing weather endpoint...');
+                const response = await fetch(`${SERVER_URL}/weather`);
+                const data = await response.json();
+                
+                console.log('Weather response:', data);
+                displayResult('weather-result', {
+                    status: response.status,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    data: data
+                });
+            } catch (error) {
+                console.error('Weather test error:', error);
+                displayResult('weather-result', {
+                    error: error.message,
+                    type: error.name
+                }, true);
+            }
+        }
+        
+        async function testPreflight() {
+            try {
+                console.log('Testing preflight request...');
+                const response = await fetch(`${SERVER_URL}/weather`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+                
+                console.log('Preflight response:', response);
+                displayResult('preflight-result', {
+                    status: response.status,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    text: await response.text()
+                });
+            } catch (error) {
+                console.error('Preflight test error:', error);
+                displayResult('preflight-result', {
+                    error: error.message,
+                    type: error.name
+                }, true);
+            }
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            console.log('Page loaded, testing CORS...');
+            testHealth();
+        });
+    </script>
+</body>
+</html>
