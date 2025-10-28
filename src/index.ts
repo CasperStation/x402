@@ -66,7 +66,7 @@ app.get("/.well-known/x402.json", (c) => {
     version: 1,
     name: "MKMOON AI",
     description: "Mint MKMOON token with 1 USDC via x402 protocol.",
-    image: "https://pbs.twimg.com/profile_images/1978862702182236160/XpOw1Mp__400x400.jpg",
+    image: "",
     website: "https://www.mkmoonai.com/",
     resources: [
       {

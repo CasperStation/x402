@@ -1,45 +1,46 @@
 import { config } from "dotenv";
-import express from "express";
-import { paymentMiddleware } from "x402-express";
-// Import the facilitator from the x402 package to use the mainnet facilitator
-import { facilitator } from "@coinbase/x402";
-
+import { Hono } from "hono";
+import { serve } from "@hono/node-server";
+import { paymentMiddleware, Network, Resource, SolanaAddress } from "x402-hono";
+import { facilitator } from "@coinbase/x402"; // For mainnet
 config();
 
-const payToAddress = process.env.PAY_TO as `0x${string}`;
+const facilitatorUrl = process.env.FACILITATOR_URL as Resource;
+const payTo = process.env.ADDRESS as `0x${string}` | SolanaAddress;
+const network = process.env.NETWORK as Network;
 
-// The CDP API key ID and secret are required to use the mainnet facilitator
-if (!payToAddress || !process.env.CDP_API_KEY_ID || !process.env.CDP_API_KEY_SECRET) {
-  console.error("Missing required environment variables");
-  process.exit(1);
-}
 
-const app = express();
+
+const app = new Hono();
+
+console.log(`Server is running`);
 
 app.use(
   paymentMiddleware(
-    payToAddress,
+    payTo,
     {
-      "GET /weather": {
-        // USDC amount in dollars
-        price: "$0.001",
+      "/mint": {
+        price: "$1",
         network: "base",
-      },
+        config: {
+          description: "Mint a new token with $1 USDC.Website : https://www.mkmoonai.com/"
+        }
+      }
     },
-    // Pass the mainnet facilitator to the payment middleware
-    facilitator,
+    facilitator
   ),
 );
 
-app.get("/weather", (req, res) => {
-  res.send({
+app.get("/mint", c => {
+  return c.json({
     report: {
-      weather: "sunny",
+      weather: "Done",
       temperature: 70,
     },
   });
 });
 
-app.listen(4021, () => {
-  console.log(`Server listening at http://localhost:4021`);
+serve({
+  fetch: app.fetch,
+  port: 4021,
 });
